@@ -1,0 +1,17 @@
+{
+  "name": "github-contributor-svg-generator",
+  "version": "1.0.0",
+  "description": "Generate SVG for github repo by counting Pull Request authors.",
+  "type": "module",
+  "author": "ShenQingchuan",
+  "license": "MIT",
+  "dependencies": {
+    "@octokit/core": "^4.0.4",
+    "commander": "^9.4.0",
+    "ora": "^6.1.2",
+    "tsx": "^3.8.0"
+  },
+  "devDependencies": {
+    "@types/node": "^18.6.2"
+  }
+}

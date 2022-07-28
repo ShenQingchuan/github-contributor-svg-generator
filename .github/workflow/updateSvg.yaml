@@ -1,0 +1,29 @@
+name: update-vuejs-docs-cn-contributors-svg
+
+on:
+  push:
+    branches:
+      - main
+  # Schedule the interval of the checks.
+  schedule:
+    - cron: '* * */1 * *'
+
+jobs:
+  update-svg:
+    name: Update Vuejs docs cn contributors SVG
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install pnpm
+        uses: pnpm/action-setup@v2.2.2
+      
+      - name: Set node version to ${{ matrix.node_version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node_version }}
+          cache: "pnpm"
+      
+      - name: Install deps
+        run: pnpm install
+
+      - name: Run generation script
+        run: pnpm tsx src/main.ts -t ${{ secrets.GITHUB_TOKEN }} -o vuejs-translations -r docs-zh-cn
