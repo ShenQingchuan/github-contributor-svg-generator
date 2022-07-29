@@ -8,11 +8,12 @@ async function main() {
     .option('-t, --token <token>', 'Personal GitHub token')
     .option('-o, --owner <owner>', 'Repo owner name')
     .option('-r, --repo <repo>', 'GitHub repo path')
+    .option('--tinypng <tinypng>', 'TinyPNG API key')
     .parse(process.argv)
 
   const options = program.opts()
-  const { token, repo, owner } = options
-  if (token && repo && owner) {
+  const { token, repo, owner, tinypng } = options
+  if (token && repo && owner && tinypng) {
     const allContributorsInfos = await fetchContributorsInfoFromPulls({ token, repo, owner })
     // count commits for all contributors we got in the map now
     await supplementContributorsCommits({ token, repo, owner, contributorsMap: allContributorsInfos })
@@ -31,6 +32,7 @@ async function main() {
     }, sortedContributors)
     await generatePNG({
       identifier: `${owner}/${repo}`,
+      tinyPNGAPIKey: tinypng,
       svgString,
     })
   }

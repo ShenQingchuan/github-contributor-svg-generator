@@ -11,6 +11,7 @@
     "commander": "^9.4.0",
     "node-fetch": "^3.2.9",
     "ora": "^6.1.2",
+    "tinypng": "^1.0.0",
     "tsx": "^3.8.0"
   },
   "devDependencies": {
