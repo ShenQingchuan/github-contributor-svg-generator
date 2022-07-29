@@ -35,7 +35,7 @@ jobs:
         run: pnpm tsx src/main.ts -t ${{ secrets.GITHUB_TOKEN }} -o vuejs-translations -r docs-zh-cn --tinypng ${{ secrets.TINYPNG_API_KEY }}
 
       - name: Update image
-      - run: |
+        run: |
           git add .
           git commit -m "workflow: update image"
           git push origin main
