@@ -1,5 +1,6 @@
 import { program } from 'commander'
 import { fetchContributorsInfoFromPulls, supplementContributorsCommits } from './fetch'
+import { generatePNG } from './generate-png'
 import { generateContributorsSVGFile } from './svg-codegen'
 
 async function main() {
@@ -17,17 +18,21 @@ async function main() {
     await supplementContributorsCommits({ token, repo, owner, contributorsMap: allContributorsInfos })
 
     // sort contributors by commit count and pull request count
-    const sortedUserNamesByContribuitionsCount = [...allContributorsInfos.entries()]
+    const sortedContributors = [...allContributorsInfos.entries()]
       .sort(([, userInfoA], [, userInfoB]) => {
         const countA = userInfoA.commitURLs.length + userInfoA.pullRequestURLs.length
         const countB = userInfoB.commitURLs.length + userInfoB.pullRequestURLs.length
         return countB - countA
       })
-    generateContributorsSVGFile({
+    const svgString = generateContributorsSVGFile({
       imgWidth: 1200,
       blockSize: 80,
       lineCount: 14,
-    }, sortedUserNamesByContribuitionsCount)
+    }, sortedContributors)
+    await generatePNG({
+      identifier: `${owner}#${repo}`,
+      svgString,
+    })
   }
 }  
 

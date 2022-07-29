@@ -7,13 +7,13 @@
   "license": "MIT",
   "dependencies": {
     "@octokit/core": "^4.0.4",
+    "@resvg/resvg-js": "^2.1.0",
     "commander": "^9.4.0",
-    "image-to-base64": "^2.2.0",
+    "node-fetch": "^3.2.9",
     "ora": "^6.1.2",
     "tsx": "^3.8.0"
   },
   "devDependencies": {
-    "@types/image-to-base64": "^2.1.0",
     "@types/node": "^18.6.2"
   }
 }
