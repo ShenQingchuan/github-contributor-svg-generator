@@ -8,10 +8,12 @@
   "dependencies": {
     "@octokit/core": "^4.0.4",
     "commander": "^9.4.0",
+    "image-to-base64": "^2.2.0",
     "ora": "^6.1.2",
     "tsx": "^3.8.0"
   },
   "devDependencies": {
+    "@types/image-to-base64": "^2.1.0",
     "@types/node": "^18.6.2"
   }
 }

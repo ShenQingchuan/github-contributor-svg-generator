@@ -4,6 +4,7 @@ import ora from 'ora'
 import url from 'url'
 import path from 'path'
 import type { ContributorsInfo } from './types'
+import imageToBase64 from 'image-to-base64'
 
 const getContributorSVGTitle = (centerX: number, yStart: number) => {
   return `<text class="contributors-title" x="${centerX}" y="${yStart}" text-anchor="middle">Contributors</text>`
@@ -32,7 +33,7 @@ const getSVGHeader = (imgWidth: number, imgHeight: number) => {
 >`
 }
 
-export function generateContributorsSVGFile(params: {
+export async function generateContributorsSVGFile(params: {
   imgWidth: number,
   blockSize: number,
   lineCount: number,
@@ -41,6 +42,7 @@ export function generateContributorsSVGFile(params: {
   if (lineCount % 2 !== 0) {
     throw Error('[Generating SVG] line count must be even')
   }
+  const generatingSvgSpin = ora('Generating SVG file...').start()
 
   // Hint: These constants may be able to be customized by config params
   const Y_START = 40
@@ -64,12 +66,18 @@ ${getContributorSVGTitle(CENTER, Y_START)}
   let contributorEntry = contributorsIterator.next()
   let countForLine = 0
   let lineIndex = 0
+  let iterCount = 1
   while (!contributorEntry.done) {
     const [_, [userName, contributorInfo]] = contributorEntry.value
     const imgX = startX + (countForLine * blockSize)
     const imgY = Y_CONTENT_START + MARGIN + (lineIndex * (AVATAR_SIZE + TEXT_FONT_SIZE + MARGIN))
+    generatingSvgSpin.text = `transforming avatar URL to base64 (${iterCount}/${contributorsMap.length})...`
+    generatingSvgSpin.render()
+    const avatarBase64 = await imageToBase64(contributorInfo.avatarURL)
     const imgSVGElement = getImgSVGElement({
-      imgX, imgY, imgSize: AVATAR_SIZE, avatarURL: contributorInfo.avatarURL,
+      imgX, imgY,
+      imgSize: AVATAR_SIZE,
+      avatarURL: `data:image/png;base64,${avatarBase64}`,
     })
     const textX = getTextX(imgX)
     const textY = imgY + AVATAR_SIZE + MARGIN
@@ -85,19 +93,21 @@ ${getContributorSVGTitle(CENTER, Y_START)}
       lineIndex += 1
     }
     contributorEntry = contributorsIterator.next()
+    iterCount += 1
   }
 
+  generatingSvgSpin.text = 'Rewrite SVG file content...'
   const dirName = url.fileURLToPath(new URL('.', import.meta.url))
   const distDir = path.resolve(dirName, '../dist')
   if (!existsSync(distDir)) {
     mkdirSync(distDir)
   }
   svgContent = `${getSVGHeader(imgWidth, (lineIndex + 1) * blockSize)}\n${svgContent}\n</svg>`
-  const svgFilePath = path.join(distDir, 'dist.svg')
+  const svgFilePath = path.join(distDir, 'all-contributors.svg')
   writeFile(svgFilePath, svgContent, { flag: 'w' }, (err) => {
     if (err) {
       console.log('[Generating SVG] Failed to write SVG content, error: ', err)
     }
   })
-  ora().succeed('[Generating SVG] Successfully generated SVG file')
+  generatingSvgSpin.succeed('[Generating SVG] Successfully generated SVG file')
 }
