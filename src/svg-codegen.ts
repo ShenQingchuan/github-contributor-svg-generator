@@ -93,7 +93,7 @@ ${getContributorSVGTitle(CENTER, Y_START)}
     mkdirSync(distDir)
   }
   svgContent = `${getSVGHeader(imgWidth, (lineIndex + 1) * blockSize)}\n${svgContent}\n</svg>`
-  const svgFilePath = path.join(distDir, 'contributors.svg')
+  const svgFilePath = path.join(distDir, 'dist.svg')
   writeFile(svgFilePath, svgContent, { flag: 'w' }, (err) => {
     if (err) {
       console.log('[Generating SVG] Failed to write SVG content, error: ', err)
