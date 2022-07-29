@@ -18,7 +18,7 @@ export async function generatePNG(
       loadSystemFonts: true
     }
   })
-  generatePNGSpin.text = 'Resolving all avatar images...'
+  generatePNGSpin.text = 'Resolving all avatars...'
   generatePNGSpin.render()
   const resolved = await Promise.all(
     resvg.imagesToResolve().map(async url => {
@@ -35,15 +35,17 @@ export async function generatePNG(
     const { url, buffer } = result
     resvg.resolveImage(url, buffer)
   }
-  generatePNGSpin.succeed('Resolved all avatars')
+  generatePNGSpin.succeed('Resolving all avatars done')
   generatePNGSpin.start('Generating PNG file')
   const pngData = resvg.render().asPng()
   const dirName = url.fileURLToPath(new URL('.', import.meta.url))
   const distDir = path.resolve(dirName, '../dist')
-  if (!existsSync(distDir)) {
-    mkdirSync(distDir)
-  }
   const pngFilePath = path.join(distDir, `${identifier}.png`)
+  const finalDir = pngFilePath.split('/').slice(0, -1).join('/')
+  console.log('finalDir', finalDir)
+  if (!existsSync(finalDir)) {
+    mkdirSync(finalDir)
+  }
   writeFileSync(pngFilePath, pngData)
-  generatePNGSpin.succeed('Finished generating PNG file.')
+  generatePNGSpin.succeed('Generating PNG file done.')
 }

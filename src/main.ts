@@ -30,7 +30,7 @@ async function main() {
       lineCount: 14,
     }, sortedContributors)
     await generatePNG({
-      identifier: `${owner}#${repo}`,
+      identifier: `${owner}/${repo}`,
       svgString,
     })
   }
