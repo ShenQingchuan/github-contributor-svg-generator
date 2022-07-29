@@ -33,9 +33,3 @@ jobs:
 
       - name: Run generation script
         run: pnpm tsx src/main.ts -t ${{ secrets.GITHUB_TOKEN }} -o vuejs-translations -r docs-zh-cn
-
-      - name: Update image file
-      - run: |
-          git add .
-          git commit -m "workflow: update image file"
-          git push origin main
