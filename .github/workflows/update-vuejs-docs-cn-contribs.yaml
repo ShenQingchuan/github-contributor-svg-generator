@@ -36,6 +36,10 @@ jobs:
 
       - name: Update image
         run: |
+          git push origin main
+          git config user.email "tmyeve@163.com"
+          git config user.name "ShenQingchuan"
           git add .
           git commit -m "workflow: update image"
+          git remote add origin https://ShenQingchuan:${{ secrets.GITHUB_TOKEN }}@github.com/ShenQingchuan/github-contributor-svg-generator.git
           git push origin main
