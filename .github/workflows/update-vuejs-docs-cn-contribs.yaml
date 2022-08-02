@@ -39,6 +39,4 @@ jobs:
           git config user.email "tmyeve@163.com"
           git config user.name "ShenQingchuan"
           git add .
-          git commit -m "workflow: update image"
-          git push origin main
-          exit 0
+          git commit -m "workflow: update image" && git push origin main || exit 0
