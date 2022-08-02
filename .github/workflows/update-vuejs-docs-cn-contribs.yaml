@@ -6,7 +6,7 @@ on:
       - main
   # Schedule the interval of the checks.
   schedule:
-    - cron: '* * */1 * *'
+    - cron: '0 7 * * *'
 
 jobs:
   update-svg:
