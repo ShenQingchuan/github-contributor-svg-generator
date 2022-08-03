@@ -15,12 +15,7 @@ export async function generatePNG(
 ) {
   const { identifier, svgString, tinyPNGAPIKey } = params
   const pngSpin = ora('Generating PNG image...').start()
-  const resvg = new Resvg(svgString, {
-    font: {
-      loadSystemFonts: true,
-      defaultFontFamily: '-apple-system'
-    }
-  })
+  const resvg = new Resvg(svgString)
   pngSpin.text = 'Resolving all avatars...'
   pngSpin.render()
   const resolved = await Promise.all(
