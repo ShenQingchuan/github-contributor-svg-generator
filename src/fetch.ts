@@ -50,9 +50,9 @@ export async function fetchContributorsInfoFromPulls(params: {
   const allContributorsInfos = new Map<string, ContributorsInfo>()
   pullsData.forEach(pull => {
     const [userName, avatarURL] = [pull.user.login, pull.user.avatar_url]
-    const mergeCommitSHA = pull.merge_commit_sha
-    if (!mergeCommitSHA) {
-      // Don't count pull request with no merge commit
+    const mergeTime = pull.merged_at
+    if (!mergeTime) {
+      // Don't collect pull requests with no merge commit
       return
     }
     const userInfoByName = allContributorsInfos.get(userName)

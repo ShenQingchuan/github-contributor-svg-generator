@@ -12,7 +12,7 @@ const getImgSVGElement = (params: {
   avatarURL: string,
 }) => {
   const { imgX, imgY, imgSize, avatarURL } = params
-  return `<image x="${imgX}" y="${imgY}" width="${imgSize}" height="${imgSize}" xlink:href="${avatarURL}" clip-path="inset(0% round 100%)" />`
+  return `<image x="${imgX}" y="${imgY}" width="${imgSize}" height="${imgSize}" xlink:href="${avatarURL}" clip-path="url(#avatarClipPath)" />`
 }
 const getNameTextSVGElement = (params: { textX: number; textY: number; text: string }) => {
   const { textX, textY, text } = params
@@ -23,10 +23,11 @@ const getAnchorWrapSVGElement = (userName: string, innerHTML: string) => {
   return `<a class="contributor-link" xlink:href="${githubProfileURL}" target="_blank" id="${userName}">\n  ${innerHTML}\n</a>\n`
 }
 const getSVGHeader = (imgWidth: number, imgHeight: number) => {
+  const clipPathDefs = '\n  <defs><clipPath id="avatarClipPath" clipPathUnits="objectBoundingBox"><circle cx="0.5" cy=".5" r=".5"/></clipPath></defs>\n'
   return `<svg 
   xmlns="http://www.w3.org/2000/svg"
   xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 ${imgWidth} ${imgHeight}" width="${imgWidth}" height="${imgHeight}"
->`
+>` + clipPathDefs
 }
 
 export function generateContributorsSVGFile(
@@ -90,7 +91,7 @@ ${getContributorSVGTitle(CENTER, Y_START)}
     contributorEntry = contributorsIterator.next()
   }
 
-  svgContent = `${getSVGHeader(imgWidth, (lineIndex + 1) * blockSize)}\n${svgContent}\n</svg>`
+  svgContent = `${getSVGHeader(imgWidth, lineIndex * blockSize)}\n${svgContent}\n</svg>`
   generatingSvgSpin.succeed('Generated SVG content string.')
   return svgContent
 }

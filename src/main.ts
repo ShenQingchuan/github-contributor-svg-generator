@@ -26,9 +26,9 @@ async function main() {
         return countB - countA
       })
     const svgString = generateContributorsSVGFile({
-      imgWidth: 1200,
-      blockSize: 80,
-      lineCount: 14,
+      imgWidth: 1000,
+      blockSize: 120,
+      lineCount: 8,
     }, sortedContributors)
     await generatePNG({
       identifier: `${owner}/${repo}`,
