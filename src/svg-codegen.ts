@@ -91,7 +91,7 @@ ${getContributorSVGTitle(CENTER, Y_START)}
     contributorEntry = contributorsIterator.next()
   }
 
-  svgContent = `${getSVGHeader(imgWidth, lineIndex * blockSize)}\n${svgContent}\n</svg>`
+  svgContent = `${getSVGHeader(imgWidth, (lineIndex * blockSize) + MARGIN + Y_START)}\n${svgContent}\n</svg>`
   generatingSvgSpin.succeed('Generated SVG content string.')
   return svgContent
 }
