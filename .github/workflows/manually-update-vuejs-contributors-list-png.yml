@@ -1,4 +1,4 @@
-name: update-vuejs-docs-cn-contributors-svg
+name: manually-update-vuejs-contributors-list-png
 
 on: workflow_dispatch
 
