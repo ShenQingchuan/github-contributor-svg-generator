@@ -39,7 +39,8 @@ export async function generatePNG(
   const dirName = url.fileURLToPath(new URL('.', import.meta.url))
   const distDir = path.resolve(dirName, '../dist')
   const pngFilePath = path.join(distDir, `${identifier}.png`)
-  const finalDir = pngFilePath.split('/').slice(0, -1).join('/')
+  const finalDir = pngFilePath.split(path.sep).slice(0, -1).join(path.sep)
+  console.log(`\nSaving to path: ${finalDir}`)
   if (!existsSync(finalDir)) {
     mkdirSync(finalDir)
   }
