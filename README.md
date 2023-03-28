@@ -71,7 +71,7 @@ jobs:
       - run: npx pnpm i
 
       - name: Run SVG generation script
-        run: npx gh-contrib-svg -t ${{ secrets.GITHUB_TOKEN }} -o rollup -r rollup-docs-cn
+        run: npx gh-contrib-svg -t ${{ secrets.GITHUB_TOKEN }} -o vuejs-translations -r docs-zh-cn
 
       - name: Commit
         uses: EndBug/add-and-commit@v4
