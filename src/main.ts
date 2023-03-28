@@ -3,13 +3,17 @@ import { fetchContributorsInfo } from './fetch'
 import { checkContribsPersistence, saveContribsPersistence } from './persistence'
 import { saveSVG as saveSVG } from './save-svg'
 import { generateContributorsSVGFile } from './svg-codegen'
+import { getDefaultValue } from './utils'
 import type { CliOptions } from './types'
 
 async function main() {
+  const defaultToken = getDefaultValue('Github_token') 
+  const defaultOwner = getDefaultValue('Github_owner')
+  
   program
     .name('gh-contrib-svg')
-    .option('-t, --token <token>', 'Personal GitHub token')
-    .option('-o, --owner <owner>', 'Repo owner name')
+    .option('-t, --token <token>', 'Personal GitHub token',defaultToken)
+    .option('-o, --owner <owner>', 'Repo owner name',defaultOwner)
     .option('-r, --repo <repo>', 'GitHub repo path')
     .option('-s, --size <size>', 'Single avatar block size (pixel)', "120")
     .option('-w, --width <width>', 'Output image width (pixel)', "1000")
@@ -18,6 +22,7 @@ async function main() {
 
   const options = program.opts()
   const { token, repo, owner, size: avatarBlockSize, width, count: lineCount } = options as CliOptions
+  
   if (token && repo && owner) {
     const startTime = performance.now()
     const allContributorsInfos = await fetchContributorsInfo({ token, repo, owner })
