@@ -2,6 +2,28 @@
 
 [中文文档](./README_CN.md)
 
+> If you find that all the avatars you see are broken images, this is due to Github's camo caching mechanism. During the development process, the author left incorrect cache records on Github when debugging, but this does not affect your normal use. To delete the cache and reset it, you can refer to the tutorial in the following repository:
+> 
+> [hub-purge](https://github.com/mpyw/hub-purge)
+> 
+> ```bash
+> # Install hub-purge
+> (
+>     cd /tmp \
+>     && curl -LO https://raw.githubusercontent.com/mpyw/hub-purge/master/hub-purge.sh \
+>      && chmod +x hub-purge.sh \
+>     && mv hub-purge.sh /usr/local/bin/hub-purge
+> )
+> ```
+> 
+> Then, you can use the command below to send PURGE request to delete cache. 
+> 
+> ```bash
+> hub-purge ShenQingchuan/github-contributor-svg-generator
+> ```
+> 
+> You may need to refresh several times by turning on Chrome DevTool's "Network" -> "Disable Cache"
+
 [![npm](https://img.shields.io/npm/v/make-github-contributor-svg.svg)](https://npmjs.com/package/make-github-contributor-svg)
 
 Generate all contributors by counting PRs and commits. 

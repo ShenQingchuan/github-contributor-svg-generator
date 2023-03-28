@@ -1,5 +1,27 @@
 # make-github-contributor-svg
 
+> 如果你发现自己看到的头像全是裂图，这是由于 Github 的 camo 缓存机制的原因，作者在开发过程中调试时在 Github 上曾经留下了错误的缓存记录，不影响你的正常使用。要删除缓存和重置，可以参考下面这个仓库的教程：
+> 
+> [hub-purge](https://github.com/mpyw/hub-purge)
+> 
+> ```bash
+> # 安装 hub-purge
+> (
+>     cd /tmp \
+>     && curl -LO https://raw.githubusercontent.com/mpyw/hub-purge/master/hub-purge.sh \
+>      && chmod +x hub-purge.sh \
+>     && mv hub-purge.sh /usr/local/bin/hub-purge
+> )
+> ```
+> 
+> 然后再使用 
+> 
+> ```bash
+> hub-purge ShenQingchuan/github-contributor-svg-generator
+> ```
+> 
+> 缓存需要打开 Chrome DevTools 在 【网络] Tab 页面中开启 “停用缓存”，可能需要反复刷新几次才可以冲掉。
+
 [![npm](https://img.shields.io/npm/v/make-github-contributor-svg.svg)](https://npmjs.com/package/make-github-contributor-svg)
 
 根据 Pull Request 及其相关用户的 Commit 数量制作贡献者 SVG 图
