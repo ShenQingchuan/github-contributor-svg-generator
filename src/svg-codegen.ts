@@ -1,18 +1,57 @@
 import ora from 'ora'
+import { $fetch } from 'ofetch'
+import sharp from 'sharp'
 import { SVG_STYLESHEETS } from './constants'
 import type { ContributorsInfo } from './types'
+
+// @ts-expect-error missing types
+import imageDataURI from 'image-data-uri'
+
+function toBuffer(ab: ArrayBuffer) {
+  const buf = Buffer.alloc(ab.byteLength)
+  const view = new Uint8Array(ab)
+  for (let i = 0; i < buf.length; ++i)
+    buf[i] = view[i]
+
+  return buf
+}
+async function round(image: string | ArrayBuffer, radius = 0.5, size = 100) {
+  const rect = Buffer.from(
+    `<svg><rect x="0" y="0" width="${size}" height="${size}" rx="${size * radius}" ry="${size * radius}"/></svg>`,
+  )
+
+  return await sharp(typeof image === 'string' ? image : toBuffer(image))
+    .resize(size, size, { fit: sharp.fit.cover })
+    .composite([{
+      blend: 'dest-in',
+      input: rect,
+      density: 72,
+    }])
+    .png({ quality: 80, compressionLevel: 8 })
+    .toBuffer()
+}
 
 const getContributorSVGTitle = (centerX: number, yStart: number) => {
   return `<text class="contributors-title" x="${centerX}" y="${yStart}" text-anchor="middle">Contributors</text>`
 }
-const getImgSVGElement = (params: {
+const getImgSVGElement = async (params: {
   imgX: number, 
   imgY: number, 
   imgSize: number, 
   avatarURL: string,
 }) => {
   const { imgX, imgY, imgSize, avatarURL } = params
-  return `<image x="${imgX}" y="${imgY}" width="${imgSize}" height="${imgSize}" xlink:href="${avatarURL}" clip-path="url(#avatarClipPath)" />`
+
+  try {
+    const avatarData = await $fetch(avatarURL, { responseType: 'arrayBuffer' })
+    const avatarDataURL = await imageDataURI.encode(
+      await round(avatarData, 0.5, 50), 'PNG'
+    )
+    return `<image x="${imgX}" y="${imgY}" width="${imgSize}" height="${imgSize}" xlink:href="${avatarDataURL}" clip-path="url(#avatarClipPath)" />`
+  } catch (e) {
+    console.error(`Fetch user avatar error: ${e}`)
+    throw e
+  }
 }
 const getNameTextSVGElement = (params: { textX: number; textY: number; text: string }) => {
   const { textX, textY, text } = params
@@ -30,7 +69,7 @@ const getSVGHeader = (imgWidth: number, imgHeight: number) => {
 >` + clipPathDefs
 }
 
-export function generateContributorsSVGFile(
+export async function generateContributorsSVGFile(
   params: {
     imgWidth: number,
     blockSize: number,
@@ -70,7 +109,7 @@ ${getContributorSVGTitle(CENTER, Y_START)}
     const [_, [userName, contributorInfo]] = contributorEntry.value
     const imgX = startX + (countForLine * blockSize)
     const imgY = Y_CONTENT_START + MARGIN + (lineIndex * (AVATAR_SIZE + TEXT_FONT_SIZE + MARGIN))
-    const imgSVGElement = getImgSVGElement({
+    const imgSVGElement = await getImgSVGElement({
       imgX, imgY,
       imgSize: AVATAR_SIZE,
       avatarURL: contributorInfo.avatarURL,

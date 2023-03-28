@@ -1,20 +1,37 @@
 {
-  "name": "github-contributor-svg-generator",
-  "version": "1.0.0",
+  "name": "make-github-contributor-svg",
+  "bin": {
+    "gh-contrib-svg": "./lib/main.js"
+  },
+  "main": "./lib/main.js",
+  "module": "./lib/main.js",
+  "files": [
+    "lib",
+    "README.md"
+  ],
+  "version": "0.0.1",
   "description": "Generate SVG for github repo by counting Pull Request authors.",
   "type": "module",
   "author": "ShenQingchuan",
   "license": "MIT",
+  "scripts": {
+    "build": "tsup",
+    "prepublish": "tsup"
+  },
   "dependencies": {
     "@octokit/core": "^4.0.4",
-    "@resvg/resvg-js": "^2.1.0",
     "commander": "^9.4.0",
+    "image-data-uri": "^2.0.1",
     "node-fetch": "^3.2.9",
+    "ofetch": "^1.0.1",
     "ora": "^6.1.2",
-    "tinypng": "^1.0.0",
+    "sharp": "^0.32.0",
+    "svgo": "^3.0.2",
     "tsx": "^3.8.0"
   },
   "devDependencies": {
-    "@types/node": "^18.6.2"
+    "@types/node": "^18.6.2",
+    "tsup": "^6.7.0",
+    "typescript": "^5.0.2"
   }
 }

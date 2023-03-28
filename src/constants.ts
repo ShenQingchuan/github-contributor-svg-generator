@@ -1,3 +1,4 @@
+export const SVG_DIST_DIR_NAME = '.github-contributors'
 export const SVG_STYLESHEETS = `<style>
 text {
   font-weight: 300;

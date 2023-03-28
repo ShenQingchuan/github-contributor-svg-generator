@@ -1,14 +1,13 @@
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs'
 import path from 'node:path'
 import url from 'node:url'
+import { SVG_DIST_DIR_NAME } from './constants'
 
 const dirName = url.fileURLToPath(new URL('.', import.meta.url))
-const distDir = path.resolve(dirName, '../dist')
+const distDir = path.resolve(dirName, `../${SVG_DIST_DIR_NAME}`)
 
-export function checkContribsPersistence(contribUserNames: string[], identifier: `${string}/${string}`) {
-  const [org, ] = identifier.split('/') as [string, string]
+export function checkContribsPersistence(contribUserNames: string[], identifier: string) {
   const distDataFilePath = path.join(distDir, `${identifier}.json`)
-
   if (!existsSync(distDataFilePath)) {
     return
   }
@@ -25,14 +24,8 @@ export function checkContribsPersistence(contribUserNames: string[], identifier:
   }
 }
 
-export function saveContribsPersistence(contribUserNames: string[], identifier: `${string}/${string}`) {
-  const [org, ] = identifier.split('/') as [string, string]
-  const distOrgDir = path.join(distDir, org)
+export function saveContribsPersistence(contribUserNames: string[], identifier: string) {
   const distDataFilePath = path.join(distDir, `${identifier}.json`)
-  if (!existsSync(distOrgDir)) {
-    mkdirSync(distOrgDir)
-  }
-
   writeFileSync(
     distDataFilePath,
     JSON.stringify(contribUserNames)

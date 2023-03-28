@@ -40,7 +40,7 @@ jobs:
         run: pnpm install
 
       - name: Run generation script
-        run: pnpm tsx src/main.ts -t ${{ secrets.GITHUB_TOKEN }} -o vitejs -r docs-cn --tinypng ${{ secrets.TINYPNG_API_KEY }}
+        run: pnpm tsx src/main.ts -t ${{ secrets.GITHUB_TOKEN }} -o vitejs -r docs-cn
 
       - name: Update image
         run: |
