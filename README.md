@@ -54,9 +54,9 @@ You can copy the yaml example below and change the `-o`, `-r` arguments by follo
 name: update-contributors-svg
 
 on:
-  # Schedule the interval of the checks.
+  workflow_dispatch: # Can trigger manually
   schedule:
-    - cron: '0 7 * * *' # Everyday 7:00
+    - cron: '0 7 * * *' # Schedule on everyday 7:00
 
 jobs:
   update-svg:
