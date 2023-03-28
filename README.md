@@ -1,5 +1,7 @@
 # make-github-contributor-svg
 
+[中文文档](./README_CN.md)
+
 [![npm](https://img.shields.io/npm/v/make-github-contributor-svg.svg)](https://npmjs.com/package/make-github-contributor-svg)
 
 Generate all contributors by counting PRs and commits. 
@@ -36,9 +38,11 @@ Options:
   -h, --help           display help for command
 ```
 
-Using the command examples provided below will retrieve repository-related information, with contribution benchmarks being users on Github who have initiated a Pull Request.
+Using the command examples provided below will fetch repository-related information.
 
-**Info:** This command would create a `.github-contributors` folder to store SVG files in your project's root directory.
+The contribution leaderboard will only display users who have created Pull Requests, and they will be ranked in descending order based on the number of Commits they have created.
+
+**Info:** After this command finished, a `.github-contributors` folder would be created, in order to store SVG files in your project's root directory.
 
 ```bash
 gh-contrib-svg -t <Your Github Token> -o vuejs-translations -r docs-zh-cn
