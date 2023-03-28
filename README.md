@@ -68,10 +68,10 @@ jobs:
         with:
           node-version: lts/*
 
-      - run: npx pnpm i
+      - run: sudo npx pnpm i
 
       - name: Run SVG generation script
-        run: npx make-github-contributor-svg -t ${{ secrets.GITHUB_TOKEN }} -o vuejs-translations -r docs-zh-cn
+        run: sudo npx make-github-contributor-svg -t ${{ secrets.GITHUB_TOKEN }} -o vuejs-translations -r docs-zh-cn
 
       - name: Commit
         uses: EndBug/add-and-commit@v4
