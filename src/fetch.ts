@@ -4,12 +4,17 @@ import type { ContributorsInfo, ContributorsInfoMap } from './types'
 
 async function traversePagesForCount(
   requestByPage: (page: number) => Promise<any>,
+  breakOn?: (resp: any) => boolean,
 ) {
   let page = 1;
   const dataCollection: any[] = [];
   while (true) {
     const resp = await requestByPage(page);
     if (resp.data.length === 0) {
+      break;
+    }
+    if (breakOn?.(resp)) {
+      dataCollection.push(...resp.data)
       break;
     }
     page++
@@ -19,7 +24,48 @@ async function traversePagesForCount(
   return dataCollection
 }
 
-export async function fetchContributorsInfoFromPulls(params: {
+async function getRepoCreateTime(octokit: Octokit, owner: string, repo: string) {
+  try {
+    const repoData = await octokit.request(
+      'GET /repos/{owner}/{repo}',
+      {
+        owner,
+        repo,
+      }
+    )
+    return new Date(repoData.data.created_at)
+  } catch (e) {
+    console.error(`Fetch repo create time error: ${e}`)
+    throw e
+  }
+}
+
+async function getRepoCollaborators(octokit: Octokit, owner: string, repo: string) {
+  try {
+    const collaborators = await traversePagesForCount(
+      (page) => octokit.request(
+        'GET /repos/{owner}/{repo}/collaborators{?page,per_page}',
+        {
+          owner,
+          repo,
+          page,
+          per_page: '100',
+        }
+      )
+    )
+    return collaborators
+      .filter(item => item.type === 'User')
+      .map(item => {
+        const { login: userName, avatar_url: avatarURL } = item
+        return { userName, avatarURL }
+      })
+  } catch (e) {
+    console.error(`Fetch repo create time error: ${e}`)
+    throw e
+  }
+}
+
+export async function fetchContributorsInfo(params: {
   token: string,
   owner: string,
   repo: string,
@@ -28,6 +74,8 @@ export async function fetchContributorsInfoFromPulls(params: {
   const octokit = new Octokit({ auth: token })
   const pullsData: any[] = []
   const loadingSpin = ora('Fetching pull requests...').start()
+  
+  // Fisrt, collect from Pull Requests' sender
   try {
     const pullsRespData = await traversePagesForCount(
       (page) => octokit.request(
@@ -36,7 +84,7 @@ export async function fetchContributorsInfoFromPulls(params: {
           owner,
           repo,
           page,
-          state: 'all',
+          state: 'closed',
           per_page: '100',
         }
       ), 
@@ -63,12 +111,16 @@ export async function fetchContributorsInfoFromPulls(params: {
         commitURLs: [],
       })
     } else {
-      const { pullRequestURLs } = userInfoByName
-      allContributorsInfos.set(userName, {
-        ...userInfoByName,
-        pullRequestURLs: [...pullRequestURLs, pull.url],
-      })
+      userInfoByName.pullRequestURLs.push(pull.url)
     }
+  })
+
+  // count commits for all contributors we got in the map now
+  await supplementContributorsCommits({ 
+    token, 
+    repo, 
+    owner,
+    contributorsMap: allContributorsInfos 
   })
 
   return allContributorsInfos
@@ -83,40 +135,66 @@ export async function supplementContributorsCommits(params: {
   const { token, owner, repo, contributorsMap } = params
   const octokit = new Octokit({ auth: token })
   const commitsData: any[] = []
+  
+  const repoCreateTime = await getRepoCreateTime(
+    octokit,
+    owner,
+    repo
+  );
+
   const loadingSpin = ora('Fetching commits...').start()
   try {
     const commitsRespData = await traversePagesForCount(
       (page) => octokit.request(
-        'GET /repos/{owner}/{repo}/commits{?page,per_page}', 
+        'GET /repos/{owner}/{repo}/commits{?page,per_page,since}', 
         {
           owner,
           repo,
           page,
           per_page: '100',
         }
-      ), 
+      ),
+      (resp) => {
+        const commits = resp.data
+        if (commits.some((commit: any) => {
+          const { commit: { author: { date } } } = commit
+          return new Date(date).getTime() < repoCreateTime.getTime()
+        })) {
+          return true
+        }
+
+        return false
+      }
     )
-    commitsData.push(...commitsRespData.map((commit: any) => {
-      const { commit: { author: { name: userName }, url } } = commit
-      return { userName, url }
-    }))
+    commitsData.push(...commitsRespData
+      .filter((commit: any) => Boolean(commit?.author?.login))
+      .map((commit: any) => {
+        const { author: { login: userName }, commit: { author: { date }, url } } = commit
+        return { userName, url, date }
+      })
+    )
     loadingSpin.succeed('Fetching commits done')
   } catch (err) {
     console.log('Error: Fetching contributors commits failed! ' + err)
   }
 
   loadingSpin.start('Supplementing commits info to contributors map...')
-  commitsData.forEach(commitInfo => {
+  commitsData
+    .filter(
+      commit => new Date(commit.date).getTime() > repoCreateTime.getTime()
+    )
+    .forEach(commitInfo => {
     const { userName, url } = commitInfo
-    const userInfoByName = contributorsMap.get(userName)
-    if (!userInfoByName) {
+    const foundUserInfoByName = contributorsMap.get(userName)
+    if (!foundUserInfoByName) {
       return
     }
-    const { commitURLs } = userInfoByName
-    contributorsMap.set(userName, {
-      ...userInfoByName,
-      commitURLs: [...commitURLs, url],
-    })
+    
+    const userInfoByName = contributorsMap.get(userName)!
+    if (!userInfoByName.commitURLs) {
+      userInfoByName.commitURLs = []
+    }
+    userInfoByName.commitURLs.push(url)
   })
   loadingSpin.succeed('Supplementing commits done')
 }

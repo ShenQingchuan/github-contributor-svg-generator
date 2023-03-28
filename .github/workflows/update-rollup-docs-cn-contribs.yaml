@@ -1,0 +1,50 @@
+name: update-vitejs-docs-cn-contributors-svg
+
+on:
+  workflow_dispatch: 
+    inputs:
+      logLevel:
+        description: 'Log level'
+        required: true
+        default: 'warning'
+        type: choice
+        options:
+          - info
+          - warning
+          - debug
+  # Schedule the interval of the checks.
+  schedule:
+    - cron: '0 7 * * *'
+
+jobs:
+  update-svg:
+    name: Update Vuejs docs cn contributors SVG
+    runs-on: macos-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v2.2.2
+        with:
+          version: 7
+      
+      - name: Set node version to 16.x
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16.x
+          registry-url: https://registry.npmjs.org/
+          cache: "pnpm"
+      
+      - name: Install deps
+        run: pnpm install
+
+      - name: Run generation script
+        run: pnpm tsx src/main.ts -t ${{ secrets.GITHUB_TOKEN }} -o rollup -r rollup-docs-cn
+
+      - name: Update image
+        run: |
+          git config user.email "tmyeve@163.com"
+          git config user.name "ShenQingchuan"
+          git add .
+          git commit -m "workflow: update image" && git push origin main || exit 0

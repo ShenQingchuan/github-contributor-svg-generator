@@ -30,28 +30,30 @@ async function round(image: string | ArrayBuffer, radius = 0.5, size = 100) {
     .png({ quality: 80, compressionLevel: 8 })
     .toBuffer()
 }
-
-const getContributorSVGTitle = (centerX: number, yStart: number) => {
-  return `<text class="contributors-title" x="${centerX}" y="${yStart}" text-anchor="middle">Contributors</text>`
+async function getAvatarDataURI(avatarURL: string) {
+  const avatarData = await $fetch(avatarURL, { responseType: 'arrayBuffer' })
+  const avatarDataURL = await imageDataURI.encode(
+    await round(avatarData, 0.5, 50), 'PNG'
+  )
+  return avatarDataURL
 }
-const getImgSVGElement = async (params: {
+async function getImgSVGElement(params: {
   imgX: number, 
   imgY: number, 
   imgSize: number, 
   avatarURL: string,
-}) => {
+}) {
   const { imgX, imgY, imgSize, avatarURL } = params
-
   try {
-    const avatarData = await $fetch(avatarURL, { responseType: 'arrayBuffer' })
-    const avatarDataURL = await imageDataURI.encode(
-      await round(avatarData, 0.5, 50), 'PNG'
-    )
-    return `<image x="${imgX}" y="${imgY}" width="${imgSize}" height="${imgSize}" xlink:href="${avatarDataURL}" clip-path="url(#avatarClipPath)" />`
+    return `<image x="${imgX}" y="${imgY}" width="${imgSize}" height="${imgSize}" xlink:href="${avatarURL}" clip-path="url(#avatarClipPath)" />`
   } catch (e) {
     console.error(`Fetch user avatar error: ${e}`)
     throw e
   }
+}
+
+const getContributorSVGTitle = (centerX: number, yStart: number) => {
+  return `<text class="contributors-title" x="${centerX}" y="${yStart}" text-anchor="middle">Contributors</text>`
 }
 const getNameTextSVGElement = (params: { textX: number; textY: number; text: string }) => {
   const { textX, textY, text } = params
@@ -75,7 +77,7 @@ export async function generateContributorsSVGFile(
     blockSize: number,
     lineCount: number,
   }, 
-  contributorsMap: [string, ContributorsInfo][]
+  contributorsMap: Map<string, ContributorsInfo>
 ) {
   const { imgWidth, blockSize, lineCount } = params
   if (lineCount % 2 !== 0) {
@@ -99,14 +101,23 @@ export async function generateContributorsSVGFile(
   let svgContent = `
 ${SVG_STYLESHEETS}
 ${getContributorSVGTitle(CENTER, Y_START)}
-`
+`;
+
+  // Convert all contributors' avatar URL to DataURI
+  await Promise.all(
+    Array.from(contributorsMap.entries())
+      .map(async ([userName, contribInfo]) => {
+        const avatarDataURI: string = await getAvatarDataURI(contribInfo.avatarURL)
+        contributorsMap.get(userName)!.avatarURL = avatarDataURI
+      })
+  )
 
   const contributorsIterator = contributorsMap.entries()
   let contributorEntry = contributorsIterator.next()
   let countForLine = 0
   let lineIndex = 0
   while (!contributorEntry.done) {
-    const [_, [userName, contributorInfo]] = contributorEntry.value
+    const [userName, contributorInfo] = contributorEntry.value
     const imgX = startX + (countForLine * blockSize)
     const imgY = Y_CONTENT_START + MARGIN + (lineIndex * (AVATAR_SIZE + TEXT_FONT_SIZE + MARGIN))
     const imgSVGElement = await getImgSVGElement({
@@ -130,7 +141,7 @@ ${getContributorSVGTitle(CENTER, Y_START)}
     contributorEntry = contributorsIterator.next()
   }
 
-  svgContent = `${getSVGHeader(imgWidth, (lineIndex * blockSize) + MARGIN + Y_START)}\n${svgContent}\n</svg>`
+  svgContent = `${getSVGHeader(imgWidth, ((lineIndex + 1) * blockSize) + MARGIN + Y_START)}\n${svgContent}\n</svg>`
   generatingSvgSpin.succeed('Generated SVG content string.')
   return svgContent
 }

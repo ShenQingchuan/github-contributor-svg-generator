@@ -1,5 +1,5 @@
 import { program } from 'commander'
-import { fetchContributorsInfoFromPulls, supplementContributorsCommits } from './fetch'
+import { fetchContributorsInfo } from './fetch'
 import { checkContribsPersistence, saveContribsPersistence } from './persistence'
 import { saveSVG as saveSVG } from './save-svg'
 import { generateContributorsSVGFile } from './svg-codegen'
@@ -7,6 +7,7 @@ import type { CliOptions } from './types'
 
 async function main() {
   program
+    .name('gh-contrib-svg')
     .option('-t, --token <token>', 'Personal GitHub token')
     .option('-o, --owner <owner>', 'Repo owner name')
     .option('-r, --repo <repo>', 'GitHub repo path')
@@ -19,9 +20,7 @@ async function main() {
   const { token, repo, owner, size: avatarBlockSize, width, count: lineCount } = options as CliOptions
   if (token && repo && owner) {
     const startTime = performance.now()
-    const allContributorsInfos = await fetchContributorsInfoFromPulls({ token, repo, owner })
-    // count commits for all contributors we got in the map now
-    await supplementContributorsCommits({ token, repo, owner, contributorsMap: allContributorsInfos })
+    const allContributorsInfos = await fetchContributorsInfo({ token, repo, owner })
 
     // sort contributors by commit count and pull request count
     const sortedContributors = [...allContributorsInfos.entries()]
@@ -41,7 +40,7 @@ async function main() {
       imgWidth: Number(width),
       blockSize: Number(avatarBlockSize),
       lineCount: Number(lineCount),
-    }, sortedContributors)
+    }, new Map(sortedContributors))
     
     saveSVG(svgString, identifier);
     saveContribsPersistence(
