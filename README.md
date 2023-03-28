@@ -1,10 +1,12 @@
 # make-github-contributor-svg
 
+[![npm](https://img.shields.io/npm/v/make-github-contributor-svg.svg)](https://npmjs.com/package/make-github-contributor-svg)
+
 Generate all contributors by counting PRs and commits. 
 
 Inspired by [Antfu's sponsorkit](https://github.com/antfu/sponsorkit)
 
-## Install
+## Guide for CLI usage
 
 ```bash
 # NPM
@@ -17,9 +19,9 @@ yarn add -D make-github-contributor-svg
 pnpm add -D make-github-contributor-svg
 ```
 
-## Guide
+This package provide a excutable command **`gh-contrib-svg`**
 
-You can run `` to display help for command:
+You can run **`gh-contrib-svg -h`** to display help for command:
 
 ```bash
 Usage: gh-contrib-svg [options]
@@ -44,9 +46,9 @@ gh-contrib-svg -t <Your Github Token> -o vuejs-translations -r docs-zh-cn
 
 The contribution ranking is calculated based on the following formula: "The user's successfully merged Pull Requests + the number of commits made by the user in the current repository."
 
-## Github Actions
+## Guide for Github Actions
 
-You can copy the yaml example below and change some
+You can copy the yaml example below and change the `-o`, `-r` arguments by following the guide above.
 
 ```yaml
 name: update-contributors-svg
@@ -59,7 +61,7 @@ on:
 jobs:
   update-svg:
     name: Update contributors SVG
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest # You can also try macos-latest
     steps:
       - uses: actions/checkout@v3
 
