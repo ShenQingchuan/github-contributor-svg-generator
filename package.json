@@ -9,7 +9,7 @@
     "lib",
     "README.md"
   ],
-  "version": "0.0.2",
+  "version": "1.0.0",
   "description": "Generate SVG for github repo by counting Pull Request authors.",
   "type": "module",
   "author": "ShenQingchuan",
@@ -25,7 +25,7 @@
     "node-fetch": "^3.2.9",
     "ofetch": "^1.0.1",
     "ora": "^6.1.2",
-    "sharp": "^0.32.0",
+    "sharp": "^0.31.3",
     "svgo": "^3.0.2",
     "tsx": "^3.8.0"
   },
