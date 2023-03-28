@@ -9,5 +9,7 @@ Inspired by [Antfu's sponsorkit](https://github.com/antfu/sponsorkit)
 Here is a demo for Vuejs Chinese documentation translation contributors.
 
 <p align="center">
-  <img src="https://cdn.jsdelivr.net/gh/ShenQingchuan/github-contributor-svg-generator@main/.github-contributors/vuejs-translations_docs-zh-cn.svg" />
+  <a href="https://cdn.jsdelivr.net/gh/ShenQingchuan/github-contributor-svg-generator@main/.github-contributors/vuejs-translations_docs-zh-cn.svg">
+    <img src="https://cdn.jsdelivr.net/gh/ShenQingchuan/github-contributor-svg-generator@main/.github-contributors/vuejs-translations_docs-zh-cn.svg" />
+  </a>
 </p>
