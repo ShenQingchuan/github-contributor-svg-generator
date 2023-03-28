@@ -10,10 +10,13 @@ async function main() {
     .option('-t, --token <token>', 'Personal GitHub token')
     .option('-o, --owner <owner>', 'Repo owner name')
     .option('-r, --repo <repo>', 'GitHub repo path')
+    .option('-s, --size <size>', 'Single avatar block size (pixel)', "120")
+    .option('-w, --width <width>', 'Output image width (pixel)', "1000")
+    .option('-c, --count <count>', 'Avatar count in one line', "8")
     .parse(process.argv)
 
   const options = program.opts()
-  const { token, repo, owner } = options as CliOptions
+  const { token, repo, owner, size: avatarBlockSize, width, count: lineCount } = options as CliOptions
   if (token && repo && owner) {
     const startTime = performance.now()
     const allContributorsInfos = await fetchContributorsInfoFromPulls({ token, repo, owner })
@@ -35,9 +38,9 @@ async function main() {
     )
 
     const svgString = await generateContributorsSVGFile({
-      imgWidth: 1000,
-      blockSize: 120,
-      lineCount: 8,
+      imgWidth: Number(width),
+      blockSize: Number(avatarBlockSize),
+      lineCount: Number(lineCount),
     }, sortedContributors)
     
     saveSVG(svgString, identifier);

@@ -2,7 +2,9 @@ export interface CliOptions {
   token: string // Github access token
   owner: string
   repo: string
-  tinypng: string // TinyPNG token
+  size: string
+  width: string
+  count: string
 }
 export interface ContributorsInfo {
   avatarURL: string,
