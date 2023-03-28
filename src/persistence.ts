@@ -1,12 +1,13 @@
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs'
 import path from 'node:path'
-import url from 'node:url'
 import { SVG_DIST_DIR_NAME } from './constants'
 
-const dirName = url.fileURLToPath(new URL('.', import.meta.url))
-const distDir = path.resolve(dirName, `../${SVG_DIST_DIR_NAME}`)
+const distDir = path.resolve(process.cwd(), SVG_DIST_DIR_NAME)
 
 export function checkContribsPersistence(contribUserNames: string[], identifier: string) {
+  if (!existsSync(distDir)) {
+    mkdirSync(distDir)
+  }
   const distDataFilePath = path.join(distDir, `${identifier}.json`)
   if (!existsSync(distDataFilePath)) {
     return
