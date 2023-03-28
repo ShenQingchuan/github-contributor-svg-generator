@@ -68,10 +68,16 @@ jobs:
         with:
           node-version: lts/*
 
-      - run: sudo npx pnpm i
+      - name: Install pnpm
+        uses: pnpm/action-setup@v2.2.2
+        with:
+          version: 7
+      
+      - name: Install deps
+        run: pnpm install
 
       - name: Run SVG generation script
-        run: sudo npx make-github-contributor-svg -t ${{ secrets.GITHUB_TOKEN }} -o vuejs-translations -r docs-zh-cn
+        run: pnpx make-github-contributor-svg -t ${{ secrets.GITHUB_TOKEN }} -o vuejs-translations -r docs-zh-cn
 
       - name: Commit
         uses: EndBug/add-and-commit@v4
