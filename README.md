@@ -68,6 +68,14 @@ The contribution leaderboard will only display users who have created Pull Reque
 
 ```bash
 gh-contrib-svg -t <Your Github Token> -o vuejs-translations -r docs-zh-cn
+
+# You can configure the default token and owner to simplify the command
+# Add the following code in .zshrc or .bashrc
+
+export $Github_token=Your GithubToken
+export $Github_owner=Repository owner name (user name or organization name)
+
+gh-contrib-svg -r <repo>
 ```
 
 The contribution ranking is calculated based on the following formula: "The user's successfully merged Pull Requests + the number of commits made by the user in the current repository."

@@ -20,7 +20,7 @@
 > hub-purge ShenQingchuan/github-contributor-svg-generator
 > ```
 > 
-> 缓存需要打开 Chrome DevTools 在 【网络] Tab 页面中开启 “停用缓存”，可能需要反复刷新几次才可以冲掉。
+> 缓存需要打开 Chrome DevTools 在 [网络] Tab 页面中开启 “停用缓存”，可能需要反复刷新几次才可以冲掉。
 
 [![npm](https://img.shields.io/npm/v/make-github-contributor-svg.svg)](https://npmjs.com/package/make-github-contributor-svg)
 
@@ -66,6 +66,13 @@ Options:
 
 ```bash
 gh-contrib-svg -t <你的 Github Token> -o vuejs-translations -r docs-zh-cn
+
+# 你可以配置默认的token和owner, 简化命令
+# 在.zshrc或.bashrc中添加以下代码
+export $Github_token=你的GithubToken
+export $Github_owner=仓库拥有者名称（用户名或组织名）
+
+gh-contrib-svg -r <repo>
 ```
 
 贡献排名是根据以下公式计算的：“用户成功合并的 Pull Request 数量 + 用户在当前仓库中提交的代码数量。”
