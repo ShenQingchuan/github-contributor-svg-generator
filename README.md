@@ -76,6 +76,9 @@ export $Github_token=Your GithubToken
 export $Github_owner=Repository owner name (user name or organization name)
 
 gh-contrib-svg -r <repo>
+
+# If you execute this command in the root directory of the project -r can also be omitted, and the name in package.json in the current directory is read by default
+gh-contrib-svg
 ```
 
 The contribution ranking is calculated based on the following formula: "The user's successfully merged Pull Requests + the number of commits made by the user in the current repository."
