@@ -57,6 +57,13 @@ async function main() {
 
     const endTime = performance.now()
     console.log(`Time cost: ${Math.round((endTime - startTime) / 1000)}s`)
+  }else {
+    if(!token)
+      throw new Error('Personal GitHub token is required')
+    if(!repo)
+      throw new Error('Repo owner name is required')
+    if(!owner)
+      throw new Error('GitHub repo path is required')
   }
 }  
 
