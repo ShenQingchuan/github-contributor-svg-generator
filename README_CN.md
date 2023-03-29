@@ -74,8 +74,8 @@ export $Github_owner=仓库拥有者名称（用户名或组织名）
 
 gh-contrib-svg -r <repo>
 
-# 如果你是在项目的根目录下执行这个命令-r也可以省略, 默认读取当前目录下的package.json中的name
-gh-contrib-svg
+# 或 可以直接使用 gh-contrib-svg repo地址
+gh-contrib-svg https://github.com/ShenQingchuan/github-contributor-svg-generator
 ```
 
 贡献排名是根据以下公式计算的：“用户成功合并的 Pull Request 数量 + 用户在当前仓库中提交的代码数量。”
