@@ -1,15 +1,24 @@
-import child_process from 'child_process'
-import fsp from 'fs/promises'
 import path from 'path'
 
-export function getDefaultValue(name:string){
- return child_process.spawnSync(`echo $${name}`,{shell:true,encoding:'utf-8',stdio:'pipe'}).stdout.replace('\n','')
+export function getDefaultValue(name: string) {
+  return process.env[name]
 }
 
-export async function getPkgName(){
+export async function getRepoName() {
   try {
-    return JSON.parse(await fsp.readFile(path.resolve(process.cwd(),'./package.json'),'utf-8')).name
-  }catch(e){
+    const { repository, name } = await import(path.resolve(process.cwd(), './package.json'))
+
+    if (!repository)
+      return name
+    const url = repository?.url ?? repository
+    // "git + git@github.com:xx/xx.git"
+    // "https://github.com/tj/commander.js.git"
+    const match = url.match(/github.com[:\/]?[\w\-_]+\/([\w\-_]+)/)
+
+    if (match) {
+      return match[1]
+    }
+  } catch (e) {
 
   }
 }
