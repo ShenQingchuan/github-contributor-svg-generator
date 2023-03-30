@@ -3,7 +3,7 @@ import { fetchContributorsInfo } from './fetch'
 import { checkContribsPersistence, saveContribsPersistence } from './persistence'
 import { saveSVG as saveSVG } from './save-svg'
 import { generateContributorsSVGFile } from './svg-codegen'
-import { getDefaultValue, getRepoName } from './utils'
+import { getRepoName } from './utils'
 import type { CliOptions } from './types'
 
 
