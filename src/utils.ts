@@ -1,4 +1,5 @@
 import path from 'path'
+import fsp from 'fs/promises'
 
 export function getDefaultValue(name: string) {
   return process.env[name]
@@ -6,7 +7,7 @@ export function getDefaultValue(name: string) {
 
 export async function getRepoName() {
   try {
-    const { repository, name } = await import(path.resolve(process.cwd(), './package.json'))
+    const { repository, name } = JSON.parse(await fsp.readFile(path.resolve(process.cwd(), './package.json'), 'utf-8'))
 
     if (!repository)
       return name
