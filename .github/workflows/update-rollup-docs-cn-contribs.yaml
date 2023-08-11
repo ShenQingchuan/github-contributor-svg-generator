@@ -1,4 +1,4 @@
-name: update-vitejs-docs-cn-contributors-svg
+name: update-rollup-docs-cn-contributors-svg
 
 on:
   workflow_dispatch: 
