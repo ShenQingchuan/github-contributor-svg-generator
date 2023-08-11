@@ -18,7 +18,7 @@ on:
 
 jobs:
   update-svg:
-    name: Update Vuejs docs cn contributors SVG
+    name: Update Vitejs docs cn contributors SVG
     runs-on: macos-latest
     steps:
       - name: Checkout
